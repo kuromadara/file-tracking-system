@@ -19,6 +19,8 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
     <style>
         .sidebar-transition {
             transition: width 0.3s ease-in-out;
@@ -40,12 +42,14 @@
             display: block;
             /* Ensure the toggle button is always displayed */
         }
+
+        [x-cloak] { display: none !important; }
     </style>
     @yield('styles')
 </head>
 
 <body class="bg-gray-100">
-    <div class="flex h-screen" id="app">
+    <div class="flex h-screen" id="app" x-data>
         <!-- Sidebar -->
         <aside id="sidebar"
             class="bg-gradient-to-b from-teal-600 to-teal-700 text-white w-64 flex-shrink-0 overflow-y-auto sidebar-transition">
@@ -62,6 +66,86 @@
                         <i class="fas fa-home mr-2 sidebar-icon"></i><span class="menu-text">Dashboard</span>
                     </a>
                 @endcan
+
+                <div x-data="{ open: false }">
+                    <button @click="open = !open" class="w-full block py-2.5 px-4 rounded transition duration-200 hover:bg-teal-800 flex items-center justify-between">
+                        <div class="flex items-center">
+                            <i class="fas fa-building mr-2 sidebar-icon"></i>
+                            <span class="menu-text">Departments</span>
+                        </div>
+                        <i class="fas" :class="{ 'fa-chevron-down': !open, 'fa-chevron-up': open }"></i>
+                    </button>
+                    <div x-show="open" x-transition x-cloak class="pl-4">
+                        <a href="{{ route('departments.index') }}"
+                            class="block py-2 px-4 rounded transition duration-200 hover:bg-teal-800 flex items-center">
+                            <i class="fas fa-list mr-2 sidebar-icon"></i><span class="menu-text">List Departments</span>
+                        </a>
+                        <a href="{{ route('departments.create') }}"
+                            class="block py-2 px-4 rounded transition duration-200 hover:bg-teal-800 flex items-center">
+                            <i class="fas fa-plus mr-2 sidebar-icon"></i><span class="menu-text">Create Department</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div x-data="{ open: false }">
+                    <button @click="open = !open" class="w-full block py-2.5 px-4 rounded transition duration-200 hover:bg-teal-800 flex items-center justify-between">
+                        <div class="flex items-center">
+                            <i class="fas fa-layer-group mr-2 sidebar-icon"></i>
+                            <span class="menu-text">Sections</span>
+                        </div>
+                        <i class="fas" :class="{ 'fa-chevron-down': !open, 'fa-chevron-up': open }"></i>
+                    </button>
+                    <div x-show="open" x-transition x-cloak class="pl-4">
+                        <a href="{{ route('sections.index') }}"
+                            class="block py-2 px-4 rounded transition duration-200 hover:bg-teal-800 flex items-center">
+                            <i class="fas fa-list mr-2 sidebar-icon"></i><span class="menu-text">List Sections</span>
+                        </a>
+                        <a href="{{ route('sections.create') }}"
+                            class="block py-2 px-4 rounded transition duration-200 hover:bg-teal-800 flex items-center">
+                            <i class="fas fa-plus mr-2 sidebar-icon"></i><span class="menu-text">Create Section</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div x-data="{ open: false }">
+                    <button @click="open = !open" class="w-full block py-2.5 px-4 rounded transition duration-200 hover:bg-teal-800 flex items-center justify-between">
+                        <div class="flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2 sidebar-icon"></i>
+                            <span class="menu-text">Locations</span>
+                        </div>
+                        <i class="fas" :class="{ 'fa-chevron-down': !open, 'fa-chevron-up': open }"></i>
+                    </button>
+                    <div x-show="open" x-transition x-cloak class="pl-4">
+                        <a href="{{ route('locations.index') }}"
+                            class="block py-2 px-4 rounded transition duration-200 hover:bg-teal-800 flex items-center">
+                            <i class="fas fa-list mr-2 sidebar-icon"></i><span class="menu-text">List Locations</span>
+                        </a>
+                        <a href="{{ route('locations.create') }}"
+                            class="block py-2 px-4 rounded transition duration-200 hover:bg-teal-800 flex items-center">
+                            <i class="fas fa-plus mr-2 sidebar-icon"></i><span class="menu-text">Create Location</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div x-data="{ open: false }">
+                    <button @click="open = !open" class="w-full block py-2.5 px-4 rounded transition duration-200 hover:bg-teal-800 flex items-center justify-between">
+                        <div class="flex items-center">
+                            <i class="fas fa-clipboard-list mr-2 sidebar-icon"></i>
+                            <span class="menu-text">Fixed Assets</span>
+                        </div>
+                        <i class="fas" :class="{ 'fa-chevron-down': !open, 'fa-chevron-up': open }"></i>
+                    </button>
+                    <div x-show="open" x-transition x-cloak class="pl-4">
+                        <a href="{{ route('fixed-assets.index') }}"
+                            class="block py-2 px-4 rounded transition duration-200 hover:bg-teal-800 flex items-center">
+                            <i class="fas fa-list mr-2 sidebar-icon"></i><span class="menu-text">List Fixed Assets</span>
+                        </a>
+                        <a href="{{ route('fixed-assets.create') }}"
+                            class="block py-2 px-4 rounded transition duration-200 hover:bg-teal-800 flex items-center">
+                            <i class="fas fa-plus mr-2 sidebar-icon"></i><span class="menu-text">Create Fixed Asset</span>
+                        </a>
+                    </div>
+                </div>
 
                 @can('view package')
                     <a href="{{ route('packages.index') }}"
@@ -84,12 +168,10 @@
                     </a>
                 @endcan
 
-                {{-- @can('manage users') --}}
-                    <a href="{{ route('roles-permissions.index') }}"
-                        class="block py-2.5 px-4 rounded transition duration-200 hover:bg-teal-800 flex items-center">
-                        <i class="fas fa-users mr-2 sidebar-icon"></i><span class="menu-text">Manage Roles and Permissions</span>
-                    </a>
-                {{-- @endcan --}}
+                <a href="{{ route('roles-permissions.index') }}"
+                    class="block py-2.5 px-4 rounded transition duration-200 hover:bg-teal-800 flex items-center">
+                    <i class="fas fa-users mr-2 sidebar-icon"></i><span class="menu-text">Manage Roles and Permissions</span>
+                </a>
 
                 @can('view report')
                     <a href="#"
