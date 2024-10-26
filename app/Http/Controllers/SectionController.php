@@ -26,12 +26,12 @@ class SectionController extends Controller
                 return $section->department->name;
             })
             ->addColumn('action', function ($section) {
-                return '<a href="' . route('sections.edit', $section->id) . '" class="btn btn-xs btn-primary">Edit</a> ' .
-                    '<a href="' . route('sections.show', $section->id) . '" class="btn btn-xs btn-info">View</a> ' .
-                    '<form action="' . route('sections.destroy', $section->id) . '" method="POST" style="display:inline">' .
+                return '<a href="' . route('sections.edit', $section->id) . '" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"><i class="fas fa-edit"></i></a>' .
+                    '<a href="' . route('sections.show', $section->id) . '" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2"><i class="fas fa-eye"></i></a>' .
+                    '<form action="' . route('sections.destroy', $section->id) . '" method="POST" class="inline-block">' .
                     csrf_field() .
                     method_field('DELETE') .
-                    '<button type="submit" class="btn btn-xs btn-danger" onclick="return confirm(\'Are you sure?\')">Delete</button></form>';
+                    '<button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onclick="return confirm(\'Are you sure?\')"><i class="fas fa-trash"></i></button></form>';
             })
             ->rawColumns(['action'])
             ->make(true);

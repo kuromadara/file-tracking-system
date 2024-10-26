@@ -4,18 +4,22 @@
 
 @section('content')
     <h2 class="text-2xl font-semibold text-gray-800 mb-4">Departments</h2>
-    <a href="{{ route('departments.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4 inline-block">Create New Department</a>
+    <a href="{{ route('departments.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4 inline-block">
+        <i class="fas fa-plus mr-2"></i>Create New Department
+    </a>
 
-    <table id="departments-table" class="min-w-full bg-white">
-        <thead>
-            <tr>
-                <th class="py-2 px-4 border-b">ID</th>
-                <th class="py-2 px-4 border-b">Name</th>
-                <th class="py-2 px-4 border-b">Code</th>
-                <th class="py-2 px-4 border-b">Actions</th>
-            </tr>
-        </thead>
-    </table>
+    <div class="overflow-x-auto bg-white rounded-lg shadow overflow-y-auto relative">
+        <table id="departments-table" class="border-collapse table-auto w-full whitespace-no-wrap bg-white table-striped relative">
+            <thead>
+                <tr class="text-left">
+                    <th class="bg-gray-100 sticky top-0 border-b border-gray-200 px-6 py-3 text-gray-600 font-bold tracking-wider uppercase text-xs">ID</th>
+                    <th class="bg-gray-100 sticky top-0 border-b border-gray-200 px-6 py-3 text-gray-600 font-bold tracking-wider uppercase text-xs">Name</th>
+                    <th class="bg-gray-100 sticky top-0 border-b border-gray-200 px-6 py-3 text-gray-600 font-bold tracking-wider uppercase text-xs">Code</th>
+                    <th class="bg-gray-100 sticky top-0 border-b border-gray-200 px-6 py-3 text-gray-600 font-bold tracking-wider uppercase text-xs">Actions</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
 @endsection
 
 @section('scripts')
@@ -30,9 +34,11 @@
                 {data: 'name', name: 'name'},
                 {data: 'code', name: 'code'},
                 {data: 'action', name: 'action', orderable: false, searchable: false}
-            ]
+            ],
+            createdRow: function(row, data, dataIndex) {
+                $(row).addClass('hover:bg-gray-100');
+            }
         });
     });
 </script>
 @endsection
-

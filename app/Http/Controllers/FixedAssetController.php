@@ -29,12 +29,12 @@ class FixedAssetController extends Controller
                 return $fixedAsset->location->section->department->name;
             })
             ->addColumn('action', function ($fixedAsset) {
-                return '<a href="' . route('fixed-assets.edit', $fixedAsset->id) . '" class="btn btn-xs btn-primary">Edit</a> ' .
-                    '<a href="' . route('fixed-assets.show', $fixedAsset->id) . '" class="btn btn-xs btn-info">View</a> ' .
-                    '<form action="' . route('fixed-assets.destroy', $fixedAsset->id) . '" method="POST" style="display:inline">' .
+                return '<a href="' . route('fixed-assets.edit', $fixedAsset->id) . '" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"><i class="fas fa-edit"></i></a>' .
+                    '<a href="' . route('fixed-assets.show', $fixedAsset->id) . '" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2"><i class="fas fa-eye"></i></a>' .
+                    '<form action="' . route('fixed-assets.destroy', $fixedAsset->id) . '" method="POST" class="inline-block">' .
                     csrf_field() .
                     method_field('DELETE') .
-                    '<button type="submit" class="btn btn-xs btn-danger" onclick="return confirm(\'Are you sure?\')">Delete</button></form>';
+                    '<button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onclick="return confirm(\'Are you sure?\')"><i class="fas fa-trash"></i></button></form>';
             })
             ->rawColumns(['action'])
             ->make(true);

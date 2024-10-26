@@ -147,38 +147,31 @@
                     </div>
                 </div>
 
-                @can('view package')
-                    <a href="{{ route('packages.index') }}"
-                        class="block py-2.5 px-4 rounded transition duration-200 hover:bg-teal-800 flex items-center">
-                        <i class="fas fa-suitcase mr-2 sidebar-icon"></i><span class="menu-text">Packages</span>
-                    </a>
-                @endcan
-
-                @can('view vehicle')
-                    <a href="{{ route('vehicles.index') }}"
-                        class="block py-2.5 px-4 rounded transition duration-200 hover:bg-teal-800 flex items-center">
-                        <i class="fas fa-car mr-2 sidebar-icon"></i><span class="menu-text">Vehicles</span>
-                    </a>
-                @endcan
-
-                @can('view trip')
-                    <a href="#"
-                        class="block py-2.5 px-4 rounded transition duration-200 hover:bg-teal-800 flex items-center">
-                        <i class="fas fa-route mr-2 sidebar-icon"></i><span class="menu-text">Trips</span>
-                    </a>
-                @endcan
+                <div x-data="{ open: false }">
+                    <button @click="open = !open" class="w-full block py-2.5 px-4 rounded transition duration-200 hover:bg-teal-800 flex items-center justify-between">
+                        <div class="flex items-center">
+                            <i class="fas fa-file-alt mr-2 sidebar-icon"></i>
+                            <span class="menu-text">Files</span>
+                        </div>
+                        <i class="fas" :class="{ 'fa-chevron-down': !open, 'fa-chevron-up': open }"></i>
+                    </button>
+                    <div x-show="open" x-transition x-cloak class="pl-4">
+                        <a href="{{ route('files.create-with-dropdowns') }}"
+                            class="block py-2 px-4 rounded transition duration-200 hover:bg-teal-800 flex items-center">
+                            <i class="fas fa-file-upload mr-2 sidebar-icon"></i><span class="menu-text">Create File</span>
+                        </a>
+                        <a href="{{ route('files.index') }}"
+                            class="block py-2 px-4 rounded transition duration-200 hover:bg-teal-800 flex items-center">
+                            <i class="fas fa-file-alt mr-2 sidebar-icon"></i><span class="menu-text">All Files</span>
+                        </a>
+                    </div>
+                </div>
 
                 <a href="{{ route('roles-permissions.index') }}"
                     class="block py-2.5 px-4 rounded transition duration-200 hover:bg-teal-800 flex items-center">
                     <i class="fas fa-users mr-2 sidebar-icon"></i><span class="menu-text">Manage Roles and Permissions</span>
                 </a>
 
-                @can('view report')
-                    <a href="#"
-                        class="block py-2.5 px-4 rounded transition duration-200 hover:bg-teal-800 flex items-center">
-                        <i class="fas fa-chart-bar mr-2 sidebar-icon"></i><span class="menu-text">Reports</span>
-                    </a>
-                @endcan
             </nav>
         </aside>
 

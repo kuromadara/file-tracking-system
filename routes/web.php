@@ -85,4 +85,11 @@ Route::middleware(['auth'/* , 'can:manage_fixed_assets' */])->group(function () 
     Route::delete('/files/{file}', [FileController::class, 'destroy'])->name('files.destroy');
     Route::get('/files/{file}/movements', [FileController::class, 'showMovements'])->name('files.movements');
     Route::put('/files/{file}/move', [FileController::class, 'move'])->name('files.move');
+    Route::get('/files', [FileController::class, 'index'])->name('files.index');
+    Route::get('/files/create-with-dropdowns', [FileController::class, 'createWithDropdowns'])->name('files.create-with-dropdowns');
+    Route::post('/files/store-with-dropdowns', [FileController::class, 'storeWithDropdowns'])->name('files.store-with-dropdowns');
+    Route::get('/sections-fetch/{departmentId}', [FileController::class, 'getSections'])->name('files.get-sections');
+    Route::get('/locations-fetch/{sectionId}', [FileController::class, 'getLocations'])->name('files.get-locations');
+    Route::get('/fixed-assets-fetch/{locationId}', [FileController::class, 'getFixedAssets'])->name('files.get-fixed-assets');
+    Route::get('/files/data', [FileController::class, 'getFiles'])->name('files.data');
 });

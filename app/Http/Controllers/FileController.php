@@ -4,8 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\File;
 use App\Models\FixedAsset;
+use App\Models\Department;
+use App\Models\Section;
+use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Yajra\DataTables\Facades\DataTables;
 
 class FileController extends Controller
 {
@@ -97,5 +101,87 @@ class FileController extends Controller
         }
 
         return redirect()->back()->with('info', 'File is already in the selected location.');
+    }
+
+    public function index()
+    {
+        return view('files.index');
+    }
+
+    public function createWithDropdowns()
+    {
+        $departments = Department::all();
+        return view('files.create-with-dropdowns', compact('departments'));
+    }
+
+    public function storeWithDropdowns(Request $request)
+    {
+        $validatedData = $request->validate([
+            'file_name' => 'required|string|max:255',
+            'file_number' => 'required|string|max:255|unique:files',
+            'description' => 'nullable|string',
+            'fixed_asset_id' => 'required|exists:fixed_assets,id',
+        ]);
+
+        $validatedData['system_file_number'] = $this->generateSystemFileNumber();
+        $validatedData['current_fixed_asset_id'] = $validatedData['fixed_asset_id'];
+        unset($validatedData['fixed_asset_id']);
+
+        $file = File::create($validatedData);
+
+        // Create initial movement record
+        $file->movements()->create([
+            'from_fixed_asset_id' => null,
+            'to_fixed_asset_id' => $file->current_fixed_asset_id,
+            'moved_by_user_id' => auth()->id(),
+            'moved_at' => now(),
+            'notes' => 'Initial file creation',
+        ]);
+
+        return redirect()->route('files.index')->with('success', 'File created successfully.');
+    }
+
+    public function getSections($departmentId)
+    {
+        $department = Department::findOrFail($departmentId);
+        return response()->json($department->sections);
+    }
+
+    public function getLocations($sectionId)
+    {
+        $section = Section::findOrFail($sectionId);
+        return response()->json($section->locations);
+    }
+
+    public function getFixedAssets($locationId)
+    {
+        $location = Location::findOrFail($locationId);
+        return response()->json($location->fixedAssets);
+    }
+
+    public function getFiles()
+    {
+        $files = File::with('currentFixedAsset.location.section.department');
+
+        return DataTables::of($files)
+            ->addColumn('fixed_asset', function ($file) {
+                return $file->currentFixedAsset->asset_number;
+            })
+            ->addColumn('location', function ($file) {
+                return $file->currentFixedAsset->location->name;
+            })
+            ->addColumn('section', function ($file) {
+                return $file->currentFixedAsset->location->section->name;
+            })
+            ->addColumn('department', function ($file) {
+                return $file->currentFixedAsset->location->section->department->name;
+            })
+            ->addColumn('action', function ($file) {
+                return '<a href="' . route('files.edit', $file) . '" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"><i class="fas fa-edit"></i></a>' .
+                    '<a href="' . route('files.movements', $file) . '" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2"><i class="fas fa-history"></i></a>' .
+                    '<form action="' . route('files.destroy', $file) . '" method="POST" class="inline-block">' ;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
 }
