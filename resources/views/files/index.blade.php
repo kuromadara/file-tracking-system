@@ -29,7 +29,12 @@
         $('#files-table').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ route('files.data') }}",
+            ajax: {
+                url: "{{ route('files.data') }}",
+                data: function (d) {
+                    d.global_search = "{{ $searchTerm }}";
+                }
+            },
             columns: [
                 {data: 'file_name', name: 'file_name'},
                 {data: 'file_number', name: 'file_number'},
@@ -39,7 +44,14 @@
                 {data: 'section', name: 'currentFixedAsset.location.section.name'},
                 {data: 'department', name: 'currentFixedAsset.location.section.department.name'},
                 {data: 'action', name: 'action', orderable: false, searchable: false}
-            ]
+            ],
+            drawCallback: function() {
+                if (this.api().page.info().pages <= 1) {
+                    $('.dataTables_paginate').hide();
+                } else {
+                    $('.dataTables_paginate').show();
+                }
+            }
         });
     });
 </script>

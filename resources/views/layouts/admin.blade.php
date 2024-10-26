@@ -180,10 +180,12 @@
             <!-- Top Navigation -->
             <header id="topNav" class="bg-white shadow-md rounded-b-lg flex items-center justify-between p-4">
                 <div class="flex items-center">
-                    <input type="text" placeholder="Search..."
-                        class="border rounded px-2 py-1 focus:outline-none focus:ring focus:border-teal-300">
-                    <button
-                        class="ml-2 bg-teal-500 text-white px-4 py-1 rounded hover:bg-teal-600 focus:outline-none transition duration-200">Search</button>
+                    <form id="globalSearchForm" class="flex items-center">
+                        <input type="text" id="globalSearchInput" placeholder="Search a file here..."
+                            class="border rounded px-2 py-1 focus:outline-none focus:ring focus:border-teal-300">
+                        <button type="submit"
+                            class="ml-2 bg-teal-500 text-white px-4 py-1 rounded hover:bg-teal-600 focus:outline-none transition duration-200">Search</button>
+                    </form>
                 </div>
                 <div class="flex items-center">
                     <div class="flex items-center mr-4">
@@ -305,6 +307,12 @@
                 }
             }
         }
+
+        document.getElementById('globalSearchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var searchTerm = document.getElementById('globalSearchInput').value;
+            window.location.href = "{{ route('files.index') }}?search=" + encodeURIComponent(searchTerm);
+        });
     </script>
     @yield('scripts')
 </body>

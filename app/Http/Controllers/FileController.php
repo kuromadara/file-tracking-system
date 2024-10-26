@@ -103,9 +103,10 @@ class FileController extends Controller
         return redirect()->back()->with('info', 'File is already in the selected location.');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        return view('files.index');
+        $searchTerm = $request->input('search', '');
+        return view('files.index', compact('searchTerm'));
     }
 
     public function createWithDropdowns()
@@ -159,11 +160,27 @@ class FileController extends Controller
         return response()->json($location->fixedAssets);
     }
 
-    public function getFiles()
+    public function getFiles(Request $request)
     {
         $files = File::with('currentFixedAsset.location.section.department');
 
         return DataTables::of($files)
+            ->filter(function ($query) use ($request) {
+                $globalSearch = $request->input('global_search');
+                $yajraSearch = $request->input('search.value');
+
+                if ($globalSearch != '') {
+                    $query->where(function ($query) use ($globalSearch) {
+                        $this->applySearch($query, $globalSearch);
+                    });
+                }
+
+                if ($yajraSearch != '') {
+                    $query->where(function ($query) use ($yajraSearch) {
+                        $this->applySearch($query, $yajraSearch);
+                    });
+                }
+            })
             ->addColumn('fixed_asset', function ($file) {
                 return $file->currentFixedAsset->asset_number;
             })
@@ -179,9 +196,31 @@ class FileController extends Controller
             ->addColumn('action', function ($file) {
                 return '<a href="' . route('files.edit', $file) . '" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"><i class="fas fa-edit"></i></a>' .
                     '<a href="' . route('files.movements', $file) . '" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2"><i class="fas fa-history"></i></a>' .
-                    '<form action="' . route('files.destroy', $file) . '" method="POST" class="inline-block">' ;
+                    '<form action="' . route('files.destroy', $file) . '" method="POST" class="inline-block">' .
+                    csrf_field() .
+                    method_field('DELETE') .
+                    '<button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onclick="return confirm(\'Are you sure?\')"><i class="fas fa-trash"></i></button></form>';
             })
             ->rawColumns(['action'])
             ->make(true);
+    }
+
+    private function applySearch($query, $searchTerm)
+    {
+        $query->where('file_name', 'like', "%{$searchTerm}%")
+            ->orWhere('file_number', 'like', "%{$searchTerm}%")
+            ->orWhere('system_file_number', 'like', "%{$searchTerm}%")
+            ->orWhereHas('currentFixedAsset', function ($query) use ($searchTerm) {
+                $query->where('asset_number', 'like', "%{$searchTerm}%");
+            })
+            ->orWhereHas('currentFixedAsset.location', function ($query) use ($searchTerm) {
+                $query->where('name', 'like', "%{$searchTerm}%");
+            })
+            ->orWhereHas('currentFixedAsset.location.section', function ($query) use ($searchTerm) {
+                $query->where('name', 'like', "%{$searchTerm}%");
+            })
+            ->orWhereHas('currentFixedAsset.location.section.department', function ($query) use ($searchTerm) {
+                $query->where('name', 'like', "%{$searchTerm}%");
+            });
     }
 }
